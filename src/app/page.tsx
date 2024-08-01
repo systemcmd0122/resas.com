@@ -87,21 +87,25 @@ export default function Home() {
           </button>
         ))}
       </div>
-      <div className="grid">
+      <div className="ml-[12.5%] w-9/12 xl:columns-3 columns-2">
         {data.map((item) => (
-          <div key={item.id} className="card">
+          <div key={item.id} className="mb-5 grid card overflow-hidden">
             <div className="cardTitle">{item.name}</div>
-            <a href={item.URL} className="link" target="_blank" rel="noopener noreferrer">
-              {item.URL}
-            </a>
-            {item.coordinate && (
-              <button 
-                className="button" 
-                onClick={() => handleMapButtonClick(item.coordinate)}
-              >
-                地図で表示
-              </button>
-            )}
+            <div className="flex w-full m-auto justify-center">
+              <a href={item.URL} className="link" target="_blank" rel="noopener noreferrer">
+                <button className="m-2 p-2 rounded-lg bg-blue-500 text-white" >
+                  ウェブサイト
+                </button>
+              </a>
+              {item.coordinate && (
+                <button 
+                  className="m-2 p-2 rounded-lg bg-lime-600 text-white" 
+                  onClick={() => handleMapButtonClick(item.coordinate)}
+                >
+                  地図で表示
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
