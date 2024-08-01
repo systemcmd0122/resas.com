@@ -22,9 +22,15 @@ const PREFECTURE_RANGES = PREFECTURES.map((prefecture, index) => ({
   end: (index + 1) * 20
 }));
 
+// 座標の型を定義
+interface Location {
+  lat: number;
+  lon: number;
+}
+
 export default function Home() {
   const [data, setData] = useState<any[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lon: number } | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
 
   // データを取得する関数
   const fetchData = async (start: number, end: number) => {
@@ -45,7 +51,6 @@ export default function Home() {
   // 地図の埋め込みURLを生成する関数
   const getMapUrl = (lat: number, lon: number) => {
     console.log(`Generating map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
-    // 国土地理院の地図URL形式に合わせる
     return `https://maps.gsi.go.jp/#15/${lat}/${lon}/&base=std&ls=std&disp=1&vs=c1g1j0h0k0l0u0t0z0r0s0m0f1`;
   };
 
@@ -75,7 +80,9 @@ export default function Home() {
                 className="button" 
                 onClick={() => {
                   console.log(`Selected Coordinate: ${item.coordinate}`); // デバッグ用
-                  const [lat, lon] = item.coordinate.split(',').map(coord => parseFloat(coord.trim()));
+                  const [latStr, lonStr] = item.coordinate.split(',').map((coord: string) => coord.trim());
+                  const lat = parseFloat(latStr);
+                  const lon = parseFloat(lonStr);
                   if (!isNaN(lat) && !isNaN(lon)) {
                     setSelectedLocation({ lat, lon });
                   } else {
