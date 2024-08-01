@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import './globals.css';
 
@@ -31,6 +31,7 @@ interface Location {
 export default function Home() {
   const [data, setData] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
 
   // データを取得する関数
   const fetchData = async (start: number, end: number) => {
@@ -53,6 +54,24 @@ export default function Home() {
     console.log(`Generating map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
     return `https://maps.gsi.go.jp/#15/${lat}/${lon}/&base=std&ls=std&disp=1&vs=c1g1j0h0k0l0u0t0z0r0s0m0f1`;
   };
+
+  const handleMapButtonClick = (coordinate: string) => {
+    console.log(`Selected Coordinate: ${coordinate}`); // デバッグ用
+    const [latStr, lonStr] = coordinate.split(',').map(coord => coord.trim());
+    const lat = parseFloat(latStr);
+    const lon = parseFloat(lonStr);
+    if (!isNaN(lat) && !isNaN(lon)) {
+      setSelectedLocation({ lat, lon });
+    } else {
+      console.error('Invalid coordinate format:', coordinate);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedLocation && mapRef.current) {
+      mapRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [selectedLocation]);
 
   return (
     <div className="container">
@@ -78,17 +97,7 @@ export default function Home() {
             {item.coordinate && (
               <button 
                 className="button" 
-                onClick={() => {
-                  console.log(`Selected Coordinate: ${item.coordinate}`); // デバッグ用
-                  const [latStr, lonStr] = item.coordinate.split(',').map((coord: string) => coord.trim());
-                  const lat = parseFloat(latStr);
-                  const lon = parseFloat(lonStr);
-                  if (!isNaN(lat) && !isNaN(lon)) {
-                    setSelectedLocation({ lat, lon });
-                  } else {
-                    console.error('Invalid coordinate format:', item.coordinate);
-                  }
-                }}
+                onClick={() => handleMapButtonClick(item.coordinate)}
               >
                 地図で表示
               </button>
@@ -97,7 +106,7 @@ export default function Home() {
         ))}
       </div>
       {selectedLocation && (
-        <div className="map">
+        <div className="map" ref={mapRef}>
           <iframe
             width="100%"
             height="500"
