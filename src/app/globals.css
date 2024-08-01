@@ -69,3 +69,8 @@ body {
 .link:hover {
   text-decoration: underline;
 }
+
+
+.map {
+  margin-top: 20px;
+}

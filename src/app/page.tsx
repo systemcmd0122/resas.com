@@ -24,6 +24,7 @@ const PREFECTURE_RANGES = PREFECTURES.map((prefecture, index) => ({
 
 export default function Home() {
   const [data, setData] = useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lon: number } | null>(null);
 
   // データを取得する関数
   const fetchData = async (start: number, end: number) => {
@@ -37,7 +38,15 @@ export default function Home() {
       console.error('Error fetching data:', error);
       return;
     }
+    console.log('Fetched Data:', places); // デバッグ用
     setData(places || []);
+  };
+
+  // 地図の埋め込みURLを生成する関数
+  const getMapUrl = (lat: number, lon: number) => {
+    console.log(`Generating map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
+    // 国土地理院の地図URL形式に合わせる
+    return `https://maps.gsi.go.jp/#15/${lat}/${lon}/&base=std&ls=std&disp=1&vs=c1g1j0h0k0l0u0t0z0r0s0m0f1`;
   };
 
   return (
@@ -61,9 +70,36 @@ export default function Home() {
             <a href={item.URL} className="link" target="_blank" rel="noopener noreferrer">
               {item.URL}
             </a>
+            {item.coordinate && (
+              <button 
+                className="button" 
+                onClick={() => {
+                  console.log(`Selected Coordinate: ${item.coordinate}`); // デバッグ用
+                  const [lat, lon] = item.coordinate.split(',').map(coord => parseFloat(coord.trim()));
+                  if (!isNaN(lat) && !isNaN(lon)) {
+                    setSelectedLocation({ lat, lon });
+                  } else {
+                    console.error('Invalid coordinate format:', item.coordinate);
+                  }
+                }}
+              >
+                地図で表示
+              </button>
+            )}
           </div>
         ))}
       </div>
+      {selectedLocation && (
+        <div className="map">
+          <iframe
+            width="100%"
+            height="500"
+            src={getMapUrl(selectedLocation.lat, selectedLocation.lon)}
+            style={{ border: 0 }}
+            allowFullScreen
+          ></iframe>
+        </div>
+      )}
     </div>
   );
 }
