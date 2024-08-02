@@ -49,16 +49,15 @@ export default function Home() {
     setData(places || []);
   };
 
-  // 地図の埋め込みURLを生成する関数（国土地理院）
+  // 地図の埋め込みURLを生成する関数
   const getGsiMapUrl = (lat: number, lon: number) => {
     console.log(`Generating GSI map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
     return `https://maps.gsi.go.jp/#15/${lat}/${lon}/&base=std&ls=std&disp=1&vs=c1g1j0h0k0l0u0t0z0r0s0m0f1`;
   };
 
-  // Google Maps の埋め込みURLを生成する関数（APIキーなし）
   const getGoogleMapUrl = (lat: number, lon: number) => {
     console.log(`Generating Google map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
-    return `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${lat},${lon}`;
+    return `https://www.google.com/maps?q=${lat},${lon}&hl=ja`;
   };
 
   const handleMapButtonClick = (coordinate: string) => {
@@ -99,7 +98,7 @@ export default function Home() {
             <div className="cardTitle">{item.name}</div>
             <div className="flex w-full m-auto justify-center">
               <a href={item.URL} className="link" target="_blank" rel="noopener noreferrer">
-                <button className="m-2 p-2 rounded-lg bg-blue-500 text-white" >
+                <button className="m-2 p-2 rounded-lg bg-blue-500 text-white">
                   ウェブサイト
                 </button>
               </a>
@@ -117,7 +116,8 @@ export default function Home() {
       </div>
       {selectedLocation && (
         <div className="map" ref={mapRef}>
-          <div className="mapContainer">
+          <div>
+            <h2>国土地理院地図</h2>
             <iframe
               width="100%"
               height="500"
@@ -125,6 +125,9 @@ export default function Home() {
               style={{ border: 0 }}
               allowFullScreen
             ></iframe>
+          </div>
+          <div>
+            <h2>Googleマップ</h2>
             <iframe
               width="100%"
               height="500"
