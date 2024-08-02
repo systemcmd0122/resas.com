@@ -57,7 +57,8 @@ export default function Home() {
 
   const getGoogleMapUrl = (lat: number, lon: number) => {
     console.log(`Generating Google map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
-    return `https://www.google.com/maps?q=${lat},${lon}&hl=ja`;
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    return `https://www.google.com/maps/embed/v1/view?key=${apiKey}&center=${lat},${lon}&zoom=15`;
   };
 
   const handleMapButtonClick = (coordinate: string) => {
