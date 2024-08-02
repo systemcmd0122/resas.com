@@ -49,10 +49,16 @@ export default function Home() {
     setData(places || []);
   };
 
-  // 地図の埋め込みURLを生成する関数
-  const getMapUrl = (lat: number, lon: number) => {
-    console.log(`Generating map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
+  // 地図の埋め込みURLを生成する関数（国土地理院）
+  const getGsiMapUrl = (lat: number, lon: number) => {
+    console.log(`Generating GSI map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
     return `https://maps.gsi.go.jp/#15/${lat}/${lon}/&base=std&ls=std&disp=1&vs=c1g1j0h0k0l0u0t0z0r0s0m0f1`;
+  };
+
+  // Google Maps の埋め込みURLを生成する関数（APIキーなし）
+  const getGoogleMapUrl = (lat: number, lon: number) => {
+    console.log(`Generating Google map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
+    return `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${lat},${lon}`;
   };
 
   const handleMapButtonClick = (coordinate: string) => {
@@ -111,13 +117,22 @@ export default function Home() {
       </div>
       {selectedLocation && (
         <div className="map" ref={mapRef}>
-          <iframe
-            width="100%"
-            height="500"
-            src={getMapUrl(selectedLocation.lat, selectedLocation.lon)}
-            style={{ border: 0 }}
-            allowFullScreen
-          ></iframe>
+          <div className="mapContainer">
+            <iframe
+              width="100%"
+              height="500"
+              src={getGsiMapUrl(selectedLocation.lat, selectedLocation.lon)}
+              style={{ border: 0 }}
+              allowFullScreen
+            ></iframe>
+            <iframe
+              width="100%"
+              height="500"
+              src={getGoogleMapUrl(selectedLocation.lat, selectedLocation.lon)}
+              style={{ border: 0 }}
+              allowFullScreen
+            ></iframe>
+          </div>
         </div>
       )}
     </div>
