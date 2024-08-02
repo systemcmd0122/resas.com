@@ -49,6 +49,21 @@ export default function Home() {
     setData(places || []);
   };
 
+  // データのリアルタイムサブスクリプション
+  useEffect(() => {
+    const subscription = supabase
+      .from('places')
+      .on('UPDATE', payload => {
+        console.log('Received update:', payload); // デバッグ用
+        fetchData(1, 1000); // ID範囲を適宜調整する
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeSubscription(subscription);
+    };
+  }, []);
+
   // 地図の埋め込みURLを生成する関数
   const getMapUrl = (lat: number, lon: number) => {
     console.log(`Generating map URL for lat: ${lat}, lon: ${lon}`); // デバッグ用
