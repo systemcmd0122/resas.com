@@ -1,8 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import './globals.css';
+
+// Supabaseのクライアントを作成
+const supabaseUrl = 'YOUR_SUPABASE_URL';
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
 
 // 都道府県名のリスト
 const PREFECTURES = [
@@ -53,14 +58,22 @@ export default function Home() {
   useEffect(() => {
     const subscription = supabase
       .from('places')
+      .on('INSERT', payload => {
+        console.log('Received insert:', payload); // デバッグ用
+        fetchData(1, 1000); // ID範囲を適宜調整する
+      })
       .on('UPDATE', payload => {
         console.log('Received update:', payload); // デバッグ用
+        fetchData(1, 1000); // ID範囲を適宜調整する
+      })
+      .on('DELETE', payload => {
+        console.log('Received delete:', payload); // デバッグ用
         fetchData(1, 1000); // ID範囲を適宜調整する
       })
       .subscribe();
 
     return () => {
-      supabase.removeSubscription(subscription);
+      subscription.unsubscribe();
     };
   }, []);
 
